@@ -11,7 +11,7 @@ class Scraper {
         for (String p : pages) {
             Collector c = new Collector(p);
             try {
-//                c.visitPage(p, 0);
+                c.visitPage(p, 0);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

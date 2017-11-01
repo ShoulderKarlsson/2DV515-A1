@@ -2,9 +2,10 @@ import java.util.ArrayList;
 
 public class Collector {
     private final int MAX_RUNS = 2;
+    private String base = "https://en.wikipedia.org";
+
     private PageProcessor pP = new PageProcessor();
-    String base = "https://en.wikipedia.org";
-    FileHandler fH = new FileHandler();
+    private FileHandler fH = new FileHandler();
 
     // represents where all of the pages are coming from
     private String basePage = "";
@@ -30,21 +31,22 @@ public class Collector {
 
         try {
 
-            /**
-             * 1. get page for the specific URL
-             * 2. Extract links for that URL
-             * 3. Store all the links to a file
-             */
+            // 1. Collect the page for the specific url
+            String pageContent = pP.readPage(base + url);
+
+            // 2. Extract the links for that page
+            ArrayList<String> pageLinks = pP.getPageLinks(pageContent);
+
+            // 3. Store all the links for that page to a file.
+            fH.addLinksToFile(pageLinks, url);
 
 
 
 
 
             // Entire content of the url
-            String pageContent = pP.readPage(base + url);
 
             // all URLS for that page
-            ArrayList<String> pageLinks = pP.getPageLinks(pageContent);
 
 
         } catch (Exception e) {
