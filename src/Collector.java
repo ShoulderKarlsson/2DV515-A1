@@ -1,10 +1,10 @@
-package lib;
 import java.util.ArrayList;
 
 public class Collector {
     private final int MAX_RUNS = 2;
     private PageProcessor pP = new PageProcessor();
     String base = "https://en.wikipedia.org";
+    FileHandler fH = new FileHandler();
 
     // represents where all of the pages are coming from
     private String basePage = "";
@@ -12,6 +12,9 @@ public class Collector {
 
     Collector(String bP) {
         this.basePage = bP;
+
+        // only interested in last part of /wiki/SomeStartPage
+        fH.createBaseStructureFor(bP.split("/")[2]);
     }
 
     /**
