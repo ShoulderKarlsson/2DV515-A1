@@ -8,13 +8,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class PageProcessor {
-    public int counter = 0;
     HashSet<String> getPageLinks(String page) {
         Pattern p = Pattern.compile("href=\"(.*?)\"");
         Matcher m = p.matcher(page);
         HashSet<String> links = new HashSet<>();
-
-        while(!m.hitEnd()) {
+        while (!m.hitEnd()) {
             if (m.find()) {
                 String matchingString = page.substring(m.start(), m.end());
                 String link = matchingString.substring(matchingString.indexOf("\"") + 1, matchingString.lastIndexOf("\""));
@@ -30,11 +28,10 @@ class PageProcessor {
 
     String readPage(String url) throws IOException {
         URL wikiPage = new URL(url);
-        counter++;
         BufferedReader pageStream = new BufferedReader(new InputStreamReader(wikiPage.openStream()));
         String line;
         StringBuilder content = new StringBuilder();
-        while((line = pageStream.readLine()) != null) {
+        while ((line = pageStream.readLine()) != null) {
             content.append(line).append("\n");
         }
 
@@ -43,6 +40,7 @@ class PageProcessor {
 
     /**
      * Will fetch all words that are on the page
+     *
      * @param pageContent all content on a page
      * @return page content
      */

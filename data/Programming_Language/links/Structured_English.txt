@@ -1,0 +1,13 @@
+/wiki/Attempto_Controlled_English
+/wiki/Natural_language_programming
+/wiki/Structured_English
+/wiki/Decision_tree
+/wiki/Self-documenting_code
+/wiki/Programming_language_syntax
+/wiki/Pseudocode
+/wiki/English_language
+/wiki/Main_Page
+/wiki/Decision_table
+/wiki/Decision_tables
+/wiki/Structured_programming
+/wiki/Decision_Tree

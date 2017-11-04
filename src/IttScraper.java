@@ -2,8 +2,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 class IttScraper {
-    private String start;
-    private final int MAX_LEVEL = 1;
+    private final int MAX_LEVEL = 2;
     private int currentLevel = 0;
     private PageProcessor pp = new PageProcessor();
     private FileHandler fh;
@@ -15,7 +14,6 @@ class IttScraper {
     private HashSet<String> links;
 
     IttScraper(String start) {
-        this.start = start;
         this.fh = new FileHandler(extractPageName(start));
         links = new HashSet<>();
         links.add(start);
@@ -25,7 +23,6 @@ class IttScraper {
         try {
             while(currentLevel < MAX_LEVEL) {
                 collectPages();
-
 
                 // Increasing the current depth of the scraper.
                 currentLevel++;
@@ -38,17 +35,18 @@ class IttScraper {
 
 
     void collectPages() throws IOException {
-
+        int count = 0;
         // Holds all links found on that specific level.
         HashSet<String> levelLinks = new HashSet<>();
         for (String link : links) {
+            Logger.displayProgress(count, links.size());
             String page = pp.readPage(BASE_URL + link);
             HashSet<String> pageLinks = pp.getPageLinks(page);
-            fh.addLinksToFile(pageLinks, extractPageName(page));
+            fh.addLinksToFile(pageLinks, extractPageName(link));
             levelLinks.addAll(pageLinks);
+            count++;
         }
 
-        System.out.println("Amount of links found on level " + currentLevel + " : " + levelLinks.size());
 
         // updating links to the next level.
         links = levelLinks;

@@ -1,0 +1,10 @@
+/wiki/International_Standard_Book_Number
+/wiki/JSTOR
+/wiki/Main_Page
+/wiki/AWK
+/wiki/Frank_Pfenning
+/wiki/Type_system
+/wiki/Types_and_Programming_Languages
+/wiki/Book
+/wiki/Benjamin_C._Pierce
+/wiki/Digital_object_identifier

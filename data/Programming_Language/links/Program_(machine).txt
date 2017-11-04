@@ -1,0 +1,15 @@
+/wiki/Musical_box
+/wiki/Jacquard_loom
+/wiki/Machine
+/wiki/Fairground_organ
+/wiki/Synthesizer
+/wiki/Punched_card
+/wiki/Computer_program
+/wiki/Music_roll
+/wiki/Computer
+/wiki/Program_(machine)
+/wiki/Player_piano
+/wiki/Main_Page
+/wiki/Programmable_thermostat
+/wiki/Barrel_organ
+/wiki/Cloth
