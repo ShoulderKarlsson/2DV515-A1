@@ -16,8 +16,8 @@ class FileHandler {
      */
     void createBaseStructure() {
         try {
-            String basePath = createFolder(workingDir + "/data");
-            String pagePath = createFolder(basePath + "/" + startPage);
+            String dataFolderPath = createFolder(workingDir + "/data");
+            String pagePath = createFolder(dataFolderPath + "/" + startPage);
             createFolder(pagePath + "/words");
             createFolder(pagePath + "/links");
 
@@ -27,7 +27,6 @@ class FileHandler {
     }
 
     void addLinksToFile(HashSet<String> links, String originPage) {
-//        String linksFilePath = workingDir + "/data/" + startPage + "/links/" + originPage + ".txt";
         String linksFilePath = createFilePath("links", originPage);
         try {
             File f = new File(linksFilePath);
@@ -40,7 +39,8 @@ class FileHandler {
                 pW.close();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("addLinksToFileError");
+            System.out.println(e);
         }
     }
 
@@ -56,6 +56,7 @@ class FileHandler {
                 pw.close();
             }
         } catch (Exception e) {
+            System.out.println("AddHTMLToFileError");
             System.out.println(e);
         }
     }

@@ -6,7 +6,10 @@ public class Main {
 //        s.run();
 
 
-        IttScraper is = new IttScraper("/wiki/Programming_Language");
-        is.run();
+        IttScraper is1 = new IttScraper("/wiki/Programming_Language");
+        is1.run();
+
+        IttScraper is2 = new IttScraper("/wiki/Television");
+        is2.run();
     }
 }
