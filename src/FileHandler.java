@@ -32,9 +32,7 @@ class FileHandler {
             File f = new File(linksFilePath);
             f.createNewFile();
             PrintWriter pW = new PrintWriter(linksFilePath, "UTF-8");
-            for (String link : links) {
-                pW.println(link);
-            }
+            links.forEach(pW::println);
             pW.close();
         } catch (Exception e) {
             System.out.println("addLinksToFileError");

@@ -1,52 +1,44 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 class IttScraper {
-    private final int LEVEL_DEPTH;
-    private final int CHUNK_SIZE;
-    private int currentLevel = 0;
-    private int totalCounter = 0;
-    private PageProcessor pp = new PageProcessor();
+    private PageProcessor pp;
     private FileHandler fh;
-    private final String BASE_URL = "https://en.wikipedia.org";
-    private String startCategory;
-
-
-    private ArrayList<Page> chunks = new ArrayList<>();
-
-
-    // Not sure if this will be a hashset in the future...
+    private ArrayList<Page> chunks;
     private HashSet<String> links;
 
+    private final int LEVEL_DEPTH;
+    private final int CHUNK_SIZE;
+    private final String BASE_URL = "https://en.wikipedia.org";
+
+    private int currentLevel = 0;
+    private int totalCounter = 0;
+    private String startCategory;
+
     IttScraper(String startCategory, int levelDepth, int chunkSize) {
-        this.startCategory = startCategory;
         this.fh = new FileHandler(extractPageName(startCategory));
+        this.pp = new PageProcessor();
+        links = new HashSet<>();
+        chunks = new ArrayList<>();
+        this.startCategory = startCategory;
         this.LEVEL_DEPTH = levelDepth;
         this.CHUNK_SIZE = chunkSize;
-        links = new HashSet<>();
         links.add(startCategory);
     }
 
     void run() {
-        Logger.displayStartingScrape(this.startCategory);
-        try {
-            while (currentLevel < LEVEL_DEPTH) {
-                totalCounter = 0;
-                Logger.displayLevelInformation(links.size(), currentLevel);
-                collectPages();
-
-                // Increasing the current depth of the scraper.
-                currentLevel++;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
+        Logger.displayStartingScrape(this.startCategory, CHUNK_SIZE, LEVEL_DEPTH);
+        while (currentLevel < LEVEL_DEPTH) {
+            totalCounter = 0;
+            Logger.displayLevelInformation(links.size(), currentLevel);
+            collectPages();
+            currentLevel++;
         }
 
         Logger.displayFinishedScrape(totalCounter, startCategory);
     }
 
-    private void collectPages() throws IOException {
+    private void collectPages() {
         // Holds all links found on that specific level.
         HashSet<String> levelLinks = new HashSet<>();
         for (String link : links) {
@@ -57,7 +49,6 @@ class IttScraper {
             levelLinks.addAll(pageLinks);
             chunks.add(new Page(pageName, rawPage, pageLinks));
 
-
             if (chunks.size() == CHUNK_SIZE) {
                 totalCounter += chunks.size();
                 Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
@@ -65,7 +56,7 @@ class IttScraper {
             }
         }
 
-        // writing last chunks
+        // Writing remaining chunks
         if (chunks.size() != 0) {
             totalCounter += chunks.size();
             Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
@@ -97,6 +88,10 @@ class IttScraper {
     }
 
 
+    /**
+     * Simple inner class that holds information about page
+     * when the page is waiting to get stored in the chunk pile.
+     */
     private class Page {
         private String pageName;
         private HashSet<String> pageLinks;

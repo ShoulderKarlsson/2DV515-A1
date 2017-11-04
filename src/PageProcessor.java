@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,24 +27,25 @@ class PageProcessor {
     }
 
 
-    String readPage(String url) throws IOException {
-        URL wikiPage = new URL(url);
-        BufferedReader pageStream = new BufferedReader(new InputStreamReader(wikiPage.openStream()));
-        String line;
+    String readPage(String url) {
         StringBuilder content = new StringBuilder();
-        while ((line = pageStream.readLine()) != null) {
-            content.append(line).append("\n");
+        try {
+            URL wikiPage = new URL(url);
+            BufferedReader pageStream = new BufferedReader(new InputStreamReader(wikiPage.openStream()));
+            String line;
+            while ((line = pageStream.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            System.out.println("readPage error");
+            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
         return content.toString();
     }
 
-    /**
-     * Will fetch all words that are on the page
-     *
-     * @param pageContent all content on a page
-     * @return page content
-     */
+
     String getPageContent(String pageContent) {
         return "";
     }
