@@ -30,14 +30,12 @@ class FileHandler {
         String linksFilePath = createFilePath("links", originPage);
         try {
             File f = new File(linksFilePath);
-            if (!f.exists()) {
-                PrintWriter pW = new PrintWriter(linksFilePath, "UTF-8");
-                f.createNewFile();
-                for (String link : links) {
-                    pW.println(link);
-                }
-                pW.close();
+            f.createNewFile();
+            PrintWriter pW = new PrintWriter(linksFilePath, "UTF-8");
+            for (String link : links) {
+                pW.println(link);
             }
+            pW.close();
         } catch (Exception e) {
             System.out.println("addLinksToFileError");
             System.out.println(e);
@@ -49,12 +47,10 @@ class FileHandler {
         String wordsFilePath = createFilePath("words", originPage);
         try {
             File f = new File(wordsFilePath);
-            if (!f.exists()) {
-                PrintWriter pw = new PrintWriter(wordsFilePath, "UTF-8");
-                f.createNewFile();
-                pw.print(html);
-                pw.close();
-            }
+            f.createNewFile();
+            PrintWriter pw = new PrintWriter(wordsFilePath, "UTF-8");
+            pw.print(html);
+            pw.close();
         } catch (Exception e) {
             System.out.println("AddHTMLToFileError");
             System.out.println(e);

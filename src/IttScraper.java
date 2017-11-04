@@ -1,8 +1,10 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 class IttScraper {
-    private final int MAX_LEVEL = 2;
+    private final int LEVEL_DEPTH;
+    private final int CHUNK_SIZE;
     private int currentLevel = 0;
     private int totalCounter = 0;
     private PageProcessor pp = new PageProcessor();
@@ -11,19 +13,26 @@ class IttScraper {
     private String startCategory;
 
 
+    private ArrayList<Page> chunks = new ArrayList<>();
+
+
     // Not sure if this will be a hashset in the future...
     private HashSet<String> links;
 
-    IttScraper(String startCategory) {
+    IttScraper(String startCategory, int levelDepth, int chunkSize) {
         this.startCategory = startCategory;
         this.fh = new FileHandler(extractPageName(startCategory));
+        this.LEVEL_DEPTH = levelDepth;
+        this.CHUNK_SIZE = chunkSize;
         links = new HashSet<>();
         links.add(startCategory);
     }
 
     void run() {
+        Logger.displayStartingScrape(this.startCategory);
         try {
-            while (currentLevel < MAX_LEVEL) {
+            while (currentLevel < LEVEL_DEPTH) {
+                totalCounter = 0;
                 Logger.displayLevelInformation(links.size(), currentLevel);
                 collectPages();
 
@@ -34,39 +43,45 @@ class IttScraper {
             System.out.println(e);
         }
 
-        Logger.displayInformatinoWhenDone(totalCounter, startCategory);
+        Logger.displayFinishedScrape(totalCounter, startCategory);
     }
 
     private void collectPages() throws IOException {
-        int superCounter = 0;
         // Holds all links found on that specific level.
         HashSet<String> levelLinks = new HashSet<>();
         for (String link : links) {
 
-            if (superCounter == 100 || links.size() == 1) {
-                // Logging process during development...
-                Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
-                superCounter = 0;
-            }
-
             String pageName = extractPageName(link);
-            String page = pp.readPage(BASE_URL + link);
-            HashSet<String> pageLinks = pp.getPageLinks(page);
-            fh.addLinksToFile(pageLinks, pageName);
-            fh.addHTMLToFile(page, pageName);
+            String rawPage = pp.readPage(BASE_URL + link);
+            HashSet<String> pageLinks = pp.getPageLinks(rawPage);
+            levelLinks.addAll(pageLinks);
+            chunks.add(new Page(pageName, rawPage, pageLinks));
 
-            // Only adding links if we are to go one more level.
-            if (currentLevel + 1 < MAX_LEVEL) {
-                levelLinks.addAll(pageLinks);
+
+            if (chunks.size() == CHUNK_SIZE) {
+                totalCounter += chunks.size();
+                Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
+                writeChunks();
             }
-            totalCounter++;
-            superCounter++;
         }
 
+        // writing last chunks
+        if (chunks.size() != 0) {
+            totalCounter += chunks.size();
+            Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
+            writeChunks();
+        }
 
-        Logger.displayDoneWithLevelInformaiton(totalCounter, currentLevel);
-        // updating links to the next level.
         links = levelLinks;
+    }
+
+    private void writeChunks() {
+        chunks.forEach(page -> {
+            fh.addHTMLToFile(page.pageContent, page.pageName);
+            fh.addLinksToFile(page.pageLinks, page.pageName);
+        });
+
+        chunks.clear();
     }
 
     /**
@@ -79,5 +94,18 @@ class IttScraper {
      */
     private String extractPageName(String page) {
         return page.split("/")[2];
+    }
+
+
+    private class Page {
+        private String pageName;
+        private HashSet<String> pageLinks;
+        private String pageContent;
+
+        Page(String pageName, String pageContent, HashSet<String> pageLinks) {
+            this.pageName = pageName;
+            this.pageLinks = pageLinks;
+            this.pageContent = pageContent;
+        }
     }
 }

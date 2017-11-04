@@ -2,14 +2,13 @@ import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 public class Main {
     public static void main(String[] args) {
-//        Scraper s = new Scraper();
-//        s.run();
 
-
-        IttScraper is1 = new IttScraper("/wiki/Programming_Language");
+        String categoryOne = "/wiki/Programming_Language";
+        IttScraper is1 = new IttScraper(categoryOne, 2, 500);
         is1.run();
 
-        IttScraper is2 = new IttScraper("/wiki/Television");
-        is2.run();
+//        String categoryTwo = "/wiki/Television";
+//        IttScraper is2 = new IttScraper(categoryTwo, 2, 500);
+//        is2.run();
     }
 }
