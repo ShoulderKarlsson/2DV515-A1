@@ -1,17 +1,23 @@
 import java.io.File;
-import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.util.HashSet;
 
 class FileHandler {
+    private String workingDir = System.getProperty("user.dir");
+    private String startPage;
+
+    FileHandler(String startPage) {
+        this.startPage = startPage;
+        createBaseStructure();
+    }
 
     /**
      * Creates the folder structure for a start page.
-     * @param page - A start page for a scrape
      */
-    void createBaseStructureFor(String page) {
-        String workingDir = System.getProperty("user.dir");
+    void createBaseStructure() {
         try {
             String basePath = createFolder(workingDir + "/data");
-            String pagePath = createFolder(basePath + "/" + page);
+            String pagePath = createFolder(basePath + "/" + startPage);
             createFolder(pagePath + "/words");
             createFolder(pagePath + "/links");
 
@@ -20,8 +26,21 @@ class FileHandler {
         }
     }
 
-    void addLinksToFile(ArrayList<String> links, String originPage) {
-        throw new Error("IMPLEMENT THIS. it should store all the links fetched from a wikipedia page and store it to a file with the same name as the page it was fetched from.");
+    void addLinksToFile(HashSet<String> links, String originPage) {
+        String linksFilePath = workingDir + "/data/" + startPage + "/links/" + originPage + ".txt";
+        try {
+            File f = new File(linksFilePath);
+            if (!f.exists()) {
+                PrintWriter pW = new PrintWriter(linksFilePath, "UTF-8");
+                f.createNewFile();
+                for (String link : links) {
+                    pW.println(link);
+                }
+                pW.close();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 

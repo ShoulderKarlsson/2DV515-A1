@@ -1,21 +1,16 @@
-import java.util.ArrayList;
+import java.util.HashSet;
 
-public class Collector {
-    private final int MAX_RUNS = 2;
+class Collector {
+    private final int MAX_LEVELS = 3;
     private String base = "https://en.wikipedia.org";
-
     private PageProcessor pP = new PageProcessor();
-    private FileHandler fH = new FileHandler();
-
-    // represents where all of the pages are coming from
-    private String basePage = "";
-
+//    private FileHandler fH = new FileHandler();
+    private FileHandler fh;
+    private HashSet<String> visited = new HashSet<>();
 
     Collector(String bP) {
-        this.basePage = bP;
-
-        // only interested in last part of /wiki/SomeStartPage
-        fH.createBaseStructureFor(bP.split("/")[2]);
+        fh = new FileHandler(bP.split("/")[2]);
+        fh.createBaseStructure();
     }
 
     /**
@@ -23,34 +18,25 @@ public class Collector {
      * @param url url to a wiki page
      * @param level how deep are we?
      */
-    public void visitPage(String url, int level) {
-        System.out.println("Fetching page content for: " + base +  url);
-        System.out.println("Current level: " + level);
+    void visitPage(String url, int level) {
         // All levels are visited, do something here.
-        if (level == MAX_RUNS) { return; }
+        if (level == MAX_LEVELS) { return; }
 
         try {
-
-            // 1. Collect the page for the specific url
             String pageContent = pP.readPage(base + url);
-
-            // 2. Extract the links for that page
-            ArrayList<String> pageLinks = pP.getPageLinks(pageContent);
-
-            // 3. Store all the links for that page to a file.
-            fH.addLinksToFile(pageLinks, url);
-
-
-
-
-
-            // Entire content of the url
-
-            // all URLS for that page
-
+            HashSet<String> pageLinks = pP.getPageLinks(pageContent);
+//            fh.addLinksToFile(pageLinks, url.split("/")[2]);
+            for (String link : pageLinks) {
+//                if (!visited.contains(link)) {
+//                    visited.add(link);
+                    visitPage(link, level + 1);
+//                }
+            }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+
+
 }
