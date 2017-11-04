@@ -27,7 +27,8 @@ class FileHandler {
     }
 
     void addLinksToFile(HashSet<String> links, String originPage) {
-        String linksFilePath = workingDir + "/data/" + startPage + "/links/" + originPage + ".txt";
+//        String linksFilePath = workingDir + "/data/" + startPage + "/links/" + originPage + ".txt";
+        String linksFilePath = createFilePath("links", originPage);
         try {
             File f = new File(linksFilePath);
             if (!f.exists()) {
@@ -44,6 +45,20 @@ class FileHandler {
     }
 
 
+    void addHTMLToFile(String html, String originPage) {
+        String wordsFilePath = createFilePath("words", originPage);
+        try {
+            File f = new File(wordsFilePath);
+            if (!f.exists()) {
+                PrintWriter pw = new PrintWriter(wordsFilePath, "UTF-8");
+                f.createNewFile();
+                pw.print(html);
+                pw.close();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     /**
      * Helper method that creates a folder if it is not existing
      * @param path path for the folder to be created at
@@ -56,5 +71,10 @@ class FileHandler {
         }
 
         return f.getAbsolutePath();
+    }
+
+
+    private String createFilePath(String section, String originPage) {
+        return workingDir + "/data/" + startPage + "/" + section + "/" + originPage + ".txt";
     }
 }

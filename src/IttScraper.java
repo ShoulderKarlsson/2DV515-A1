@@ -39,10 +39,14 @@ class IttScraper {
         // Holds all links found on that specific level.
         HashSet<String> levelLinks = new HashSet<>();
         for (String link : links) {
+
+            String pageName = extractPageName(link);
+            // Logging process during development...
             Logger.displayProgress(count, links.size());
             String page = pp.readPage(BASE_URL + link);
             HashSet<String> pageLinks = pp.getPageLinks(page);
-            fh.addLinksToFile(pageLinks, extractPageName(link));
+            fh.addLinksToFile(pageLinks, pageName);
+            fh.addHTMLToFile(page, pageName);
             levelLinks.addAll(pageLinks);
             count++;
         }
@@ -56,7 +60,7 @@ class IttScraper {
      * Collects the actual name of a /wiki/ page.
      * Uses this name for the folder structure
      * so for example, if a page is /wiki/Food,
-     * I'm only interested in Food.
+     * I'm only interested in the last part (Food).
      * @param page wikipedia page name such as /wiki/food
      * @return String which is only the page name
      */
