@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 
-class IttScraper {
+class Scraper {
     private PageProcessor pp;
     private FileHandler fh;
     private ArrayList<Page> chunks;
@@ -15,7 +15,7 @@ class IttScraper {
     private int totalCounter = 0;
     private String startCategory;
 
-    IttScraper(String startCategory, int levelDepth, int chunkSize) {
+    Scraper(String startCategory, int levelDepth, int chunkSize) {
         this.fh = new FileHandler(extractPageName(startCategory));
         this.pp = new PageProcessor();
         links = new HashSet<>();
