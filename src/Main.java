@@ -2,11 +2,12 @@ public class Main {
     public static void main(String[] args) {
 
         String categoryOne = "/wiki/Programming_Language";
-        Scraper is1 = new Scraper(categoryOne, 2, 100);
-        is1.run();
+        Scraper s1 = new Scraper(categoryOne);
+        s1.run();
 
         String categoryTwo = "/wiki/Television";
-        Scraper is2 = new Scraper(categoryTwo, 2, 500);
-        is2.run();
+        Scraper s2 = new Scraper(categoryTwo);
+        s2.run();
+
     }
 }

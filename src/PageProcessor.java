@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -44,12 +45,6 @@ class PageProcessor {
 
         return content.toString();
     }
-
-
-    String getPageContent(String pageContent) {
-        return "";
-    }
-
 
     private boolean isValidLink(String link) {
         Pattern p = Pattern.compile("^\\/wiki\\/[a-zA-z1-9]*\\-*");
