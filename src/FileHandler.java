@@ -5,7 +5,7 @@ import java.util.HashSet;
 class FileHandler {
     private String workingDir = System.getProperty("user.dir");
     private String startPage;
-
+    private int amountWritten = 0;
     FileHandler(String startPage) {
         this.startPage = startPage;
         createBaseStructure();
@@ -26,34 +26,36 @@ class FileHandler {
         }
     }
 
-    void addLinksToFile(HashSet<String> links, String originPage) {
-        String linksFilePath = createFilePath("links", originPage);
-        try {
-            File f = new File(linksFilePath);
-            f.createNewFile();
-            PrintWriter pW = new PrintWriter(linksFilePath, "UTF-8");
-            links.forEach(pW::println);
-            pW.close();
-        } catch (Exception e) {
-            System.out.println("addLinksToFileError");
-            System.out.println(e);
+    int storeContent(String originPage, HashSet<String> links, String html) {
+        String linksPath = createFilePath("links", originPage);
+        String htmlPath = createFilePath("words", originPage);
+        HashSet<String> htmlSet = new HashSet<>();
+        htmlSet.add(html);
+        if (write(linksPath, links) &&
+            write(htmlPath, htmlSet)) {
+            amountWritten++;
         }
+
+        return amountWritten;
     }
 
-
-    void addHTMLToFile(String html, String originPage) {
-        String wordsFilePath = createFilePath("words", originPage);
+    private boolean write(String path, HashSet<String> content) {
         try {
-            File f = new File(wordsFilePath);
-            f.createNewFile();
-            PrintWriter pw = new PrintWriter(wordsFilePath, "UTF-8");
-            pw.print(html);
-            pw.close();
+            File f = new File(path);
+            if (f.createNewFile()) {
+                PrintWriter pw = new PrintWriter(path, "UTF-8");
+                content.forEach(pw::println);
+                pw.close();
+            } else {
+                return false;
+            }
         } catch (Exception e) {
-            System.out.println("AddHTMLToFileError");
             System.out.println(e);
         }
+
+        return true;
     }
+
     /**
      * Helper method that creates a folder if it is not existing
      * @param path path for the folder to be created at

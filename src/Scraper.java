@@ -6,72 +6,63 @@ class Scraper {
     private FileHandler fh;
     private ArrayList<Page> chunks;
     private HashSet<String> links;
-
-    private final int LEVEL_DEPTH;
-    private final int CHUNK_SIZE;
+    private final int CHUNK_SIZE = 450;
+    private final int MAX_PAGES = 2584;
     private final String BASE_URL = "https://en.wikipedia.org";
 
-    private int currentLevel = 0;
-    private int totalCounter = 0;
+
+    // Total amount of pages we've stored.
+    private int totalPages = 0;
     private String startCategory;
 
-    Scraper(String startCategory, int levelDepth, int chunkSize) {
+    Scraper(String startCategory) {
         this.fh = new FileHandler(extractPageName(startCategory));
         this.pp = new PageProcessor();
         links = new HashSet<>();
         chunks = new ArrayList<>();
         this.startCategory = startCategory;
-        this.LEVEL_DEPTH = levelDepth;
-        this.CHUNK_SIZE = chunkSize;
         links.add(startCategory);
     }
 
     void run() {
-        Logger.displayStartingScrape(this.startCategory, CHUNK_SIZE, LEVEL_DEPTH);
-        while (currentLevel < LEVEL_DEPTH) {
-            totalCounter = 0;
-            Logger.displayLevelInformation(links.size(), currentLevel);
+        Logger.displayStartingScrape(startCategory);
+        while (totalPages < MAX_PAGES) {
             collectPages();
-            currentLevel++;
         }
 
-        Logger.displayFinishedScrape(totalCounter, startCategory);
+        Logger.displayFinishedScrape(totalPages, startCategory);
     }
 
     private void collectPages() {
         // Holds all links found on that specific level.
         HashSet<String> levelLinks = new HashSet<>();
         for (String link : links) {
-
             String pageName = extractPageName(link);
-            String rawPage = pp.readPage(BASE_URL + link);
-            HashSet<String> pageLinks = pp.getPageLinks(rawPage);
+            String html = pp.readPage(BASE_URL + link);
+            HashSet<String> pageLinks = pp.getPageLinks(html);
             levelLinks.addAll(pageLinks);
-            chunks.add(new Page(pageName, rawPage, pageLinks));
 
-            if (chunks.size() == CHUNK_SIZE) {
-                totalCounter += chunks.size();
-                Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
+            chunks.add(new Page(pageName, html, pageLinks));
+            if (chunks.size() == CHUNK_SIZE ||
+                chunks.size() + totalPages == MAX_PAGES) {
                 writeChunks();
             }
-        }
 
-        // Writing remaining chunks
-        if (chunks.size() != 0) {
-            totalCounter += chunks.size();
-            Logger.displayLevelProgress(totalCounter, links.size(), currentLevel);
-            writeChunks();
+            if (totalPages == MAX_PAGES) {
+                break;
+            }
+
         }
 
         links = levelLinks;
     }
 
-    private void writeChunks() {
-        chunks.forEach(page -> {
-            fh.addHTMLToFile(page.pageContent, page.pageName);
-            fh.addLinksToFile(page.pageLinks, page.pageName);
-        });
 
+    private void writeChunks() {
+        chunks.forEach(page ->
+                totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent));
+
+        Logger.displayChunkingProgress(totalPages, MAX_PAGES);
         chunks.clear();
     }
 
