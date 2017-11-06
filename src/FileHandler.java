@@ -43,7 +43,8 @@ class FileHandler {
 
         if (write(linksPath, links) &&
             write(rawHtmlPath, html) &&
-            write(noHtmlPath, noHtml)) {
+            write(noHtmlPath, noHtml) &&
+            write(wordsPath, onlyWords)) {
             amountWritten++;
         }
 

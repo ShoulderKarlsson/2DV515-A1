@@ -57,10 +57,9 @@ class PageProcessor {
      * @param html page in raw HTML
      * @return cleaned page
      */
-    public String cleanHTMLContent(String html) {
+    String cleanHTMLContent(String html) {
         Renderer rend = new Renderer(new Source(html));
-        String cleaned = HTMLContentCleanerHelper(rend.toString());
-        return cleaned;
+        return HTMLContentCleanerHelper(rend.toString());
     }
 
     /**
@@ -89,6 +88,18 @@ class PageProcessor {
                 .replaceAll("_", "")
                 .replaceAll("#", "")
                 .replaceAll("\\)", "");
+    }
+
+    public String findWords(String something) {
+//        Pattern p =  Pattern.compile("([a-zA-Z]*(-[a-zA-Z]+)*)*");
+        Pattern p = Pattern.compile("[a-zA-Z]+(-[a-zA-Z]+)*");
+        Matcher m = p.matcher(something);
+        StringBuilder sb = new StringBuilder();
+        while(m.find()) {
+            sb.append(m.group(0)).append(" ");
+        }
+
+        return sb.toString();
     }
 
 }

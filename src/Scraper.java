@@ -8,11 +8,13 @@ class Scraper {
     private HashSet<String> links;
     private final int CHUNK_SIZE = 25;
     private final int MAX_PAGES = 100;
+    private final int MAX_LEVEL = 2;
     private final String BASE_URL = "https://en.wikipedia.org";
 
 
     // Total amount of pages we've stored.
     private int totalPages = 0;
+    private int currentLevel = 0;
     private String startCategory;
 
     Scraper(String startCategory) {
@@ -26,8 +28,13 @@ class Scraper {
 
     void run() {
         Logger.displayStartingScrape(startCategory);
-        while (totalPages < MAX_PAGES) {
+        while (totalPages < MAX_PAGES || currentLevel <= MAX_LEVEL) {
             collectPages();
+
+//            if (currentLevel + 1 == MAX_LEVEL) {
+//                break;
+//            }
+            currentLevel++;
         }
 
         Logger.displayFinishedScrape(totalPages, startCategory);
@@ -63,14 +70,10 @@ class Scraper {
     private void writeChunks() {
         chunks.forEach(page -> {
             String noHtml = pp.cleanHTMLContent(page.pageContent);
-            totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent, noHtml, "");
+            String wordsBag = pp.findWords(noHtml);
+            totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent, noHtml, wordsBag);
         });
-//        chunks.forEach(page -> {
-//
-//                }
-//                totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent));
-
-        Logger.displayChunkingProgress(totalPages, MAX_PAGES);
+        Logger.displayChunkingProgress(totalPages, MAX_PAGES, currentLevel);
         chunks.clear();
     }
 

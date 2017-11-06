@@ -13,9 +13,11 @@ class Logger {
         System.out.println("=============================");
     }
 
-    static void displayChunkingProgress(int totalPages, int maxPages) {
+    static void displayChunkingProgress(int totalPages, int maxPages, int level) {
         int left = maxPages - totalPages;
-        System.out.println("Have currently stored " + totalPages + " out of " + maxPages
-                + ". (" + left + " pages left)");
+        System.out.println("Have currently stored "
+                + totalPages + " out of " + maxPages
+                + ". (" + left + " pages left)"
+                + "level: " + level);
     }
 }
