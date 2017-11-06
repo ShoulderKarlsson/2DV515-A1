@@ -1,6 +1,5 @@
-
+import net.htmlparser.jericho.*;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -50,6 +49,46 @@ class PageProcessor {
         Pattern p = Pattern.compile("^\\/wiki\\/[a-zA-z1-9]*\\-*");
         Matcher m = p.matcher(link);
         return m.find();
+    }
+
+
+    /**
+     * Removes everything that is HTML on the page.
+     * @param html page in raw HTML
+     * @return cleaned page
+     */
+    public String cleanHTMLContent(String html) {
+        Renderer rend = new Renderer(new Source(html));
+        String cleaned = HTMLContentCleanerHelper(rend.toString());
+        return cleaned;
+    }
+
+    /**
+     * jericho sometimes misses some tags
+     * performing some additional cleaning
+     * reference: https://drive.google.com/open?id=0Bz0K0fRgZPH_MEc5OGt1Mlc5QTA
+     * @param content page content
+     * @return String
+     */
+    private String HTMLContentCleanerHelper(String content) {
+        return content
+                .toLowerCase()
+                .replaceAll("\r", " ")
+                .replaceAll("\n", " ")
+                .replaceAll("\\<.*?>", "")
+                .replaceAll("\\[.*?\\]", "")
+                .replaceAll("\\d{4}-\\d{2}-\\d{2}", "")
+                .replaceAll("\\.", "")
+                .replaceAll(", ", "")
+                .replaceAll("\\?", "")
+                .replaceAll(";", "")
+                .replaceAll("\"", "")
+                .replaceAll(":", "")
+                .replaceAll("\\(", "")
+                .replaceAll("\\*", "")
+                .replaceAll("_", "")
+                .replaceAll("#", "")
+                .replaceAll("\\)", "");
     }
 
 }

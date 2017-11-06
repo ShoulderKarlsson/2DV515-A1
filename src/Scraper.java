@@ -6,8 +6,8 @@ class Scraper {
     private FileHandler fh;
     private ArrayList<Page> chunks;
     private HashSet<String> links;
-    private final int CHUNK_SIZE = 450;
-    private final int MAX_PAGES = 2584;
+    private final int CHUNK_SIZE = 25;
+    private final int MAX_PAGES = 100;
     private final String BASE_URL = "https://en.wikipedia.org";
 
 
@@ -48,6 +48,8 @@ class Scraper {
                 writeChunks();
             }
 
+
+            // If we have as many pages as requested, stop.
             if (totalPages == MAX_PAGES) {
                 break;
             }
@@ -59,8 +61,14 @@ class Scraper {
 
 
     private void writeChunks() {
-        chunks.forEach(page ->
-                totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent));
+        chunks.forEach(page -> {
+            String noHtml = pp.cleanHTMLContent(page.pageContent);
+            totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent, noHtml, "");
+        });
+//        chunks.forEach(page -> {
+//
+//                }
+//                totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent));
 
         Logger.displayChunkingProgress(totalPages, MAX_PAGES);
         chunks.clear();
@@ -78,10 +86,9 @@ class Scraper {
         return page.split("/")[2];
     }
 
-
     /**
-     * Simple inner class that holds information about page
-     * when the page is waiting to get stored in the chunk pile.
+     * Placeholder class for the scraper that stores the pages while
+     * the page is stored as a chunk
      */
     private class Page {
         private String pageName;

@@ -3,9 +3,15 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 
 class FileHandler {
-    private String workingDir = System.getProperty("user.dir");
+    private final String workingDir = System.getProperty("user.dir");
+    private final String WORDS = "/words";
+    private final String RAW_HTML = "/rawHtml";
+    private final String LINKS = "/links";
+    private final String NO_HTML = "/noHtml";
     private String startPage;
     private int amountWritten = 0;
+
+
     FileHandler(String startPage) {
         this.startPage = startPage;
         createBaseStructure();
@@ -18,21 +24,26 @@ class FileHandler {
         try {
             String dataFolderPath = createFolder(workingDir + "/data");
             String pagePath = createFolder(dataFolderPath + "/" + startPage);
-            createFolder(pagePath + "/words");
-            createFolder(pagePath + "/links");
+            createFolder(pagePath + WORDS);
+            createFolder(pagePath + RAW_HTML);
+            createFolder(pagePath + LINKS);
+            createFolder(pagePath + NO_HTML);
+
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    int storeContent(String originPage, HashSet<String> links, String html) {
-        String linksPath = createFilePath("links", originPage);
-        String htmlPath = createFilePath("words", originPage);
-        HashSet<String> htmlSet = new HashSet<>();
-        htmlSet.add(html);
+    int storeContent(String originPage, HashSet<String> links, String html, String noHtml, String onlyWords) {
+        String linksPath = createFilePath(LINKS, originPage);
+        String rawHtmlPath = createFilePath(RAW_HTML, originPage);
+        String noHtmlPath = createFilePath(NO_HTML, originPage);
+        String wordsPath = createFilePath(WORDS, originPage);
+
         if (write(linksPath, links) &&
-            write(htmlPath, htmlSet)) {
+            write(rawHtmlPath, html) &&
+            write(noHtmlPath, noHtml)) {
             amountWritten++;
         }
 
@@ -54,6 +65,19 @@ class FileHandler {
         }
 
         return true;
+    }
+
+    /**
+     * Overloading and creating content to the format
+     * that I've specified for my writer method.
+     * @param path to the file to be written
+     * @param content content of the file
+     * @return success of fail for written file
+     */
+    private boolean write(String path, String content) {
+        HashSet<String> s = new HashSet<>();
+        s.add(content);
+        return write(path, s);
     }
 
     /**
