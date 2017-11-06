@@ -1,9 +1,4 @@
 import net.htmlparser.jericho.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,30 +22,11 @@ class PageProcessor {
     }
 
 
-    String readPage(String url) {
-        StringBuilder content = new StringBuilder();
-        try {
-            URL wikiPage = new URL(url);
-            BufferedReader pageStream = new BufferedReader(new InputStreamReader(wikiPage.openStream()));
-            String line;
-            while ((line = pageStream.readLine()) != null) {
-                content.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            System.out.println("readPage error");
-            System.out.println(e.getMessage());
-            System.out.println(Arrays.toString(e.getStackTrace()));
-        }
-
-        return content.toString();
-    }
-
     private boolean isValidLink(String link) {
         Pattern p = Pattern.compile("^\\/wiki\\/[a-zA-z1-9]*\\-*");
         Matcher m = p.matcher(link);
         return m.find();
     }
-
 
     /**
      * Removes everything that is HTML on the page.
