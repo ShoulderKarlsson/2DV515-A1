@@ -16,7 +16,6 @@ class Scraper {
     private final String BASE_URL = "https://en.wikipedia.org";
 
 
-    // Total amount of pages we've stored.
     private int totalPages = 0;
     private int currentLevel = 0;
     private String startCategory;
@@ -46,11 +45,15 @@ class Scraper {
         // Holds all links found on that specific level.
         for (String link : links) {
             handlePage(
-                extractPageName(link),
-                fetchPage(BASE_URL + link)
+                    extractPageName(link),
+                    fetchPage(BASE_URL + link)
             );
-            if (chunks.size() == CHUNK_SIZE || chunks.size() + totalPages == MAX_PAGES) { writeChunks(); }
-            if (totalPages == MAX_PAGES) { break; }
+            if (chunks.size() == CHUNK_SIZE || chunks.size() + totalPages == MAX_PAGES) {
+                writeChunks();
+            }
+            if (totalPages == MAX_PAGES) {
+                break;
+            }
         }
 
         links = levelLinks;
@@ -86,9 +89,6 @@ class Scraper {
     private void writeChunks() {
         chunks.forEach(page -> {
             totalPages = fh.storeContent(page.pageName, page.links, page.raw, page.noTags, page.words);
-//            String noHtml = pp.cleanHTMLContent(page.pageContent);
-//            String wordsBag = pp.findWords(noHtml);
-//            totalPages = fh.storeContent(page.pageName, page.pageLinks, page.pageContent, noHtml, wordsBag);
         });
         Logger.displayChunkingProgress(totalPages, MAX_PAGES, currentLevel);
         chunks.clear();
@@ -112,12 +112,13 @@ class Scraper {
      * the page is stored as a chunk
      */
     private class Page {
-//
+        //
         private String pageName;
         private HashSet<String> links;
         private String raw;
         private String words;
         private String noTags;
+
         Page(String pageName, String raw, String words, String noTags, HashSet<String> links) {
             this.pageName = pageName;
             this.raw = raw;
