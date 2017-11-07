@@ -28,13 +28,20 @@ class FileHandler {
             createFolder(pagePath + RAW_HTML);
             createFolder(pagePath + LINKS);
             createFolder(pagePath + NO_HTML);
-
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
         }
     }
 
+    /**
+     * Stores the content of a page to a set of different files.
+     * @param originPage where the content originally came from
+     * @param links a set of links for the page
+     * @param html raw html
+     * @param noHtml html but without the tags
+     * @param onlyWords words from the page
+     * @return how many files (pages) to disk
+     */
     int storeContent(String originPage, HashSet<String> links, String html, String noHtml, String onlyWords) {
         String linksPath = createFilePath(LINKS, originPage);
         String rawHtmlPath = createFilePath(RAW_HTML, originPage);
@@ -95,7 +102,12 @@ class FileHandler {
         return f.getAbsolutePath();
     }
 
-
+    /**
+     * creates a filepath
+     * @param section in which folder it should be stored
+     * @param originPage which page the result came from
+     * @return a filepath
+     */
     private String createFilePath(String section, String originPage) {
         return workingDir + "/data/" + startPage + "/" + section + "/" + originPage + ".txt";
     }

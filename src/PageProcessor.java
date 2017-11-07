@@ -4,6 +4,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class PageProcessor {
+
+    /**
+     * Accepts Used to extract all the links from a page.
+     * @param page rawHtml page
+     * @return set of links
+     */
     HashSet<String> getPageLinks(String page) {
         Pattern p = Pattern.compile("href=\"(.*?)\"");
         Matcher m = p.matcher(page);
@@ -66,10 +72,14 @@ class PageProcessor {
                 .replaceAll("\\)", "");
     }
 
-    public String findWords(String something) {
-//        Pattern p =  Pattern.compile("([a-zA-Z]*(-[a-zA-Z]+)*)*");
+    /**
+     * Finds all the words in a string.
+     * @param sequence
+     * @return
+     */
+    String findWords(String sequence) {
         Pattern p = Pattern.compile("[a-zA-Z]+(-[a-zA-Z]+)*");
-        Matcher m = p.matcher(something);
+        Matcher m = p.matcher(sequence);
         StringBuilder sb = new StringBuilder();
         while(m.find()) {
             sb.append(m.group(0)).append(" ");

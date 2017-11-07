@@ -21,7 +21,7 @@ class Logger {
         System.out.println("Crawling from " + page);
         System.out.println("=============================");
     }
-    
+
     /**
      * Visual feedback during the scrape regarding level,
      * total pages and how much have been written in the current state.

@@ -31,6 +31,9 @@ class Scraper {
         links.add(startCategory);
     }
 
+    /**
+     * Starting point.
+     */
     void run() {
         Logger.displayStartingScrape(startCategory);
         while (totalPages < MAX_PAGES || currentLevel <= MAX_LEVEL) {
@@ -42,7 +45,6 @@ class Scraper {
     }
 
     private void collectPages() {
-        // Holds all links found on that specific level.
         for (String link : links) {
             handlePage(
                     extractPageName(link),
@@ -60,16 +62,29 @@ class Scraper {
         levelLinks = new HashSet<>();
     }
 
+    /**
+     * extracts information that is wanted from the page
+     * and also stores it in list while waiting to be written do file
+     * @param pageName
+     * @param rawHtml
+     */
     private void handlePage(String pageName, String rawHtml) {
         HashSet<String> pageLinks = pp.getPageLinks(rawHtml);
         String noTags = pp.cleanHTMLContent(rawHtml);
         String words = pp.findWords(noTags);
-        // Adding all links for the current level.
+
+        // Add all links to the links of current level
         levelLinks.addAll(pageLinks);
-        // Storing information about current page in object -> written later.
+
+        // Storing information about page when waiting to be written.
         chunks.add(new Page(pageName, rawHtml, words, noTags, pageLinks));
     }
 
+    /**
+     * Collects a page.
+     * @param url a url..
+     * @return a String..
+     */
     private String fetchPage(String url) {
         StringBuilder content = new StringBuilder();
         try {
@@ -86,6 +101,11 @@ class Scraper {
         return content.toString();
     }
 
+    /**
+     * Writes all the chunks stored in list when the list has
+     * reached the current chunksize.
+     * Updating total amount based on the amount of files the filehandler has written
+     */
     private void writeChunks() {
         chunks.forEach(page -> {
             totalPages = fh.storeContent(page.pageName, page.links, page.raw, page.noTags, page.words);
@@ -109,10 +129,9 @@ class Scraper {
 
     /**
      * Placeholder class for the scraper that stores the pages while
-     * the page is stored as a chunk
+     * the page is stored as a chunk.
      */
     private class Page {
-        //
         private String pageName;
         private HashSet<String> links;
         private String raw;
